@@ -4,11 +4,11 @@
 #include <fstream>
 #include <algorithm>
 
-int check_valid_input_line(std::string& strLine, std::vector<int>& oneLine)
+bool check_valid_input_line(std::string& strLine, std::vector<int>& oneLine)
 {
 	if (strLine.length() != 81)
 	{
-		return 2;
+		return false;
 	}
 
 	std::replace(strLine.begin(), strLine.end(), '.', '0');
@@ -19,22 +19,22 @@ int check_valid_input_line(std::string& strLine, std::vector<int>& oneLine)
 		test = strLine[i] - '0';
 		if (!(test >= 0 && test <= 9))
 		{
-			return 2;
+			return false;
 		}
 
 		oneLine.push_back(test);
 	}
 
-	return 0;
+	return true;
 }
 
-int read_from_file(const char* fileName, std::vector<std::vector<int>>& allLines)
+bool read_from_file(const char* fileName, std::vector<std::vector<int>>& allLines)
 {
 	std::ifstream ifs{ fileName };
 	if (!ifs.is_open())
 	{
 		std::cout << "Invalid file" << std::endl;
-		return 1;
+		return false;
 	}
 
 	std::string strLine;
@@ -42,9 +42,9 @@ int read_from_file(const char* fileName, std::vector<std::vector<int>>& allLines
 	{
 		std::vector<int> oneLine;
 
-		if (check_valid_input_line(strLine, oneLine) != 0)
+		if (!(check_valid_input_line(strLine, oneLine)))
 		{
-			return 2;
+			return false;
 		}
 
 		allLines.push_back(oneLine);
@@ -52,30 +52,40 @@ int read_from_file(const char* fileName, std::vector<std::vector<int>>& allLines
 
 	if (ifs.eof())
 	{
-		std::cout << "File read successful" << std::endl;
-		return 0;
+		//std::cout << "File read successful" << std::endl;
+		return true;
 	}
 
-	return 3;
-}
-
-bool isInRow(const std::vector<std::vector<int>>& sudoku, int num, int row)
-{
-	for (size_t i = 0; i < sudoku[row].size(); i++)
-	{
-		if (sudoku[row][i] == num)
-		{
-			return true;
-		}
-	}
 	return false;
 }
 
-bool isInColumn(const std::vector<std::vector<int>>& sudoku, int num, int col)
+bool read_from_standard(std::vector<std::vector<int>>& allLines)
+{
+	std::string strLine;
+	std::getline(std::cin, strLine);
+
+	std::vector<int> oneLine;
+
+	if (!(check_valid_input_line(strLine, oneLine)))
+	{
+		return false;
+	}
+
+	allLines.push_back(oneLine);
+
+	return true;
+}
+
+bool isInRowOrCol(const std::vector<std::vector<int>>& sudoku, int num, int row, int col)
 {
 	for (size_t i = 0; i < sudoku.size(); i++)
 	{
 		if (sudoku[i][col] == num)
+		{
+			return true;
+		}
+
+		if (sudoku[row][i] == num)
 		{
 			return true;
 		}
@@ -104,7 +114,7 @@ bool isInSquare(const std::vector<std::vector<int>>& sudoku, int num, int row, i
 
 bool isFit(const std::vector<std::vector<int>>& sudoku, int num, int row, int col)
 {
-	return ((!isInRow(sudoku, num, row)) && (!isInColumn(sudoku, num, col)) && (!isInSquare(sudoku, num, row, col)));
+	return ((!isInRowOrCol(sudoku, num, row, col)) && (!isInSquare(sudoku, num, row, col)));
 }
 
 bool isEmpty(const std::vector<std::vector<int>>& sudoku, int row, int col)
@@ -245,12 +255,6 @@ bool solve_sudoku_recursive(std::vector<std::vector<int>>& sudoku)
 
 int sudoku_solver(const std::vector<int>& oneLineFull)
 {
-	//for (size_t i = 0; i < oneLineFull.size(); i++)
-	//{
-	//	std::cout << oneLineFull[i];
-	//}
-	//std::cout << std::endl;
-	
 	std::vector<std::vector<int>> sudoku;
 	sudoku.resize(9);
 	for (size_t i = 0; i < sudoku.size(); i++)
@@ -280,32 +284,129 @@ int sudoku_solver(const std::vector<int>& oneLineFull)
 	}
 	else
 	{
-		//std::cout << "Sudoku nema riesenie" << std::endl;
 		std::cout << std::endl;
 	}
 
 	return 0;
 }
 
-//int main(int argc, char* argv[])
-int main()
+int main(int argc, char* argv[])
+//int main()
 {
-	
-	auto fileName = "input.txt";
 	std::vector<std::vector<int>> allLines;
-	if (read_from_file(fileName, allLines) != 0)
+	bool inputFile = false;
+	bool outputFile = false;
+	auto inputFileName = "";
+	auto outputFileName = "";
+
+	//std::cout << argc << std::endl;
+	//for (int i = 0; i < argc; i++)
+	//{
+	//	std::cout << argv[i] << " ";
+	//}
+	//std::cout << std::endl;
+
+	if (argc == 1)
+	{
+		inputFile = false;
+		outputFile = false;
+	} 
+	else if (argc == 3)
+	{
+		if (std::string(argv[1]) == "-i")
+		{
+			inputFileName = argv[2];
+			inputFile = true;
+		}
+		else if (std::string(argv[1]) == "-o")
+		{
+			outputFileName = argv[2];
+			outputFile = true;
+		}
+		else
+		{
+			return 2;
+		}
+	}
+	else if (argc == 5)
+	{
+		if (std::string(argv[1]) == "-i")
+		{
+			inputFileName = argv[2];
+			inputFile = true;
+		}
+		else if (std::string(argv[1]) == "-o")
+		{
+			outputFileName = argv[2];
+			outputFile = true;
+		}
+		else
+		{
+			return 2;
+		}
+
+		if (std::string(argv[3]) == "-i")
+		{
+			inputFileName = argv[4];
+			inputFile = true;
+		}
+		else if (std::string(argv[3]) == "-o")
+		{
+			outputFileName = argv[4];
+			outputFile = true;
+		}
+		else
+		{
+			return 2;
+		}
+	}
+	else
 	{
 		return 2;
 	}
 
-	//sudoku_solver(allLines[0]);
-	for (size_t i = 0; i < allLines.size(); i++)
+	if (inputFile)
 	{
-		sudoku_solver(allLines[i]);
+		if (!(read_from_file(inputFileName, allLines)))
+		{
+			return 2;
+		}
+	}
+	else
+	{
+		if (!(read_from_standard(allLines)))
+		{
+			return 2;
+		}
+	}
+
+	std::streambuf* coutbuf{ std::cout.rdbuf() };
+	if (outputFile)
+	{
+		std::ofstream outs{ outputFileName };
+		if (!outs.is_open())
+		{
+			return 3;
+		}
+		std::cout.rdbuf(outs.rdbuf());
+
+		for (size_t i = 0; i < allLines.size(); i++)
+		{
+			sudoku_solver(allLines[i]);
+		}
+		std::cout.rdbuf(coutbuf);
+		outs.close();
+	}
+	else
+	{
+		for (size_t i = 0; i < allLines.size(); i++)
+		{
+			sudoku_solver(allLines[i]);
+		}
 	}
 
 
-	return 99;
+	return 0;
 }
 
 
