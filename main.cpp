@@ -76,7 +76,7 @@ bool read_from_standard(std::vector<std::vector<int>>& allLines)
 	return true;
 }
 
-bool isInRowOrCol(const std::vector<std::vector<int>>& sudoku, int num, int row, int col)
+bool is_in_row_or_col(const std::vector<std::vector<int>>& sudoku, int num, int row, int col)
 {
 	for (size_t i = 0; i < sudoku.size(); i++)
 	{
@@ -93,7 +93,7 @@ bool isInRowOrCol(const std::vector<std::vector<int>>& sudoku, int num, int row,
 	return false;
 }
 
-bool isInSquare(const std::vector<std::vector<int>>& sudoku, int num, int row, int col)
+bool is_in_square(const std::vector<std::vector<int>>& sudoku, int num, int row, int col)
 {
 	int squares = 3;
 	int firstRow = (row / squares) * squares;
@@ -112,12 +112,12 @@ bool isInSquare(const std::vector<std::vector<int>>& sudoku, int num, int row, i
 	return false;
 }
 
-bool isFit(const std::vector<std::vector<int>>& sudoku, int num, int row, int col)
+bool is_fit(const std::vector<std::vector<int>>& sudoku, int num, int row, int col)
 {
-	return ((!isInRowOrCol(sudoku, num, row, col)) && (!isInSquare(sudoku, num, row, col)));
+	return ((!is_in_row_or_col(sudoku, num, row, col)) && (!is_in_square(sudoku, num, row, col)));
 }
 
-bool isEmpty(const std::vector<std::vector<int>>& sudoku, int row, int col)
+bool is_empty(const std::vector<std::vector<int>>& sudoku, int row, int col)
 {
 	return (sudoku[row][col] == 0);
 }
@@ -223,7 +223,7 @@ bool solve_sudoku_recursive(std::vector<std::vector<int>>& sudoku)
 		row = id / 9;
 		col = id % 9;
 
-		if (isEmpty(sudoku, row, col))
+		if (is_empty(sudoku, row, col))
 		{
 			empty = true;
 			break;
@@ -234,7 +234,7 @@ bool solve_sudoku_recursive(std::vector<std::vector<int>>& sudoku)
 	{
 		for (int num = 1; num <= 9; num++)
 		{
-			if (isFit(sudoku, num, row, col))
+			if (is_fit(sudoku, num, row, col))
 			{
 				sudoku[row][col] = num;
 				if (solve_sudoku_recursive(sudoku))
