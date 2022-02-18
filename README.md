@@ -45,3 +45,4 @@ Ak nastane akákoľvek chyba, teda napríklad zlý počer parametrov, neexistuj�
 Bonusový bod sa dá získať za rýchlosť. Aplikáciam sa ako vstup dá súbor so stovkami/tisíckami Sukodu a päť riešení s najrýchlejším (ale korektným :slight_smile: ) spracovaním získajú bod.
 
 Ešte jeden bonusový bod za podporu validácie sudoku. Ak dostanete parameter --check 080070030260050018000000400000602000390010086000709000004000800810040052050090070, tak na štandartný výstup vypíšte 0 ak sudoku nie je platné (teda buď nemá riešenie, alebo má viacej ako jedno), 1 ak je Sudoku v poriadku. Tu pozor, lebo ak budete len tak skúšať všetky možnosti, tak vám to môže trvať veľmi dlho a my vždy máme časový limit. 
+
